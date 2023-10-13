@@ -1,3 +1,7 @@
+---
+theme: condensed-night-purple
+highlight: atelier-dune-dark
+---
 # 浅析常见站点通用的主题肤色切换思路与实践
 
 > 大家想必都浏览过一些站点，可以随着用户点击按钮切换暗黑主题，或者提供彩色面板设置颜色换肤功能，看起来是挺有趣的，刚好最近公司项目需要对相关系统进行样式改造同时支持主题色切换，虽然不是我的需求，不过自己还是可以实践一番的，毕竟只有自己动手过才能知道细节及其加深知识点印象，下次遇到也就是顺手拈来的事，不多废话我们开始吧
@@ -43,67 +47,9 @@ const setCssVar = (key, val) => {
 
 即时切换即对编写的样式在请求的时候一并返回，达到切换无延迟效果，以下编写通过 vite 打包会对样式进行打包合并到一个文件,你也可以编写 dark.css 并在初始加载阶段一并引入， 针对暗黑模式下的相关元素进行样式设置，拷贝如下代码到 vue 文件运行即可预览
 
-```html
-<template>
-  <div class="light-dark">
-    <label for="mode">{{ isDark ? "暗黑模式" : "明亮模式" }}</label>
-    <input id="mode" v-model="isDark" type="checkbox" />
-    <h1 class="title">掘金开发者社区介绍</h1>
-    <div class="content">
-      <p>
-        掘金开发者社区是一个专注于为开发者提供交流与学习的平台。这里汇聚了众多具有丰富开发经验和热衷于技术的专家和爱好者。我们致力于帮助开发者解决实际开发过程中遇到的问题，提升技能，以及了解最新的技术动态。
-      </p>
-      <p>
-        相较于传统的开发者社区，掘金开发者社区更加注重实践与应用。我们强调将理论知识与实际操作相结合，帮助开发者更好地理解和掌握各种开发工具与技术。同时，我们也关注社区成员之间的互动与交流，鼓励彼此学习，共同进步。
-      </p>
-      <p>
-        在掘金开发者社区，你可以参加各种形式的活动，包括线上技术分享、线下技术研讨会、编程竞赛等。这些活动旨在帮助开发者们提高技术水平，拓宽视野，以及增强团队协作能力。此外，我们还设有各类技术交流群组，方便成员们分享经验，讨论问题，相互学习。
-      </p>
-      <p>
-        掘金开发者社区还提供了丰富的文档、教程、资源共享等服务。这些资料由社区成员自发贡献，内容涵盖了各种开发语言、框架和工具的使用指南与最佳实践。通过这些资料，你可以迅速找到需要的学习资源，提高开发效率。同时，社区还支持成员之间的资源共享，鼓励大家将工作中积累的宝贵经验与他人分享，实现价值最大化。
-      </p>
-      <p>
-        总之，掘金开发者社区以其独特的氛围和全方位的服务，为开发者们提供了一个理想的交流与学习平台。在这里，你可以结识志同道合的朋友，提升自己的技术能力，发现更多的机会与挑战。加入掘金开发者社区，让我们一起迈向更广阔的未来！
-      </p>
-    </div>
-  </div>
-</template>
-<script setup lang="ts">
-  import { setLightDarkClass } from '../utils/index'
-  import { ref, watch } from 'vue'
-  const isDark = ref(false)
-  watch(isDark, (v) => {
-    // class默认添加到html
-    setLightDarkClass(v)
-  })
-</script>
+> 具体示例
 
-<style lang="less">
-  :root {
-    // 默认明亮模式
-    body {
-      margin: 0;
-      transition-property: color, background-color;
-      transition-duration: 0.5s;
-      transition-timing-function: ease;
-      width: 100vw;
-      height: 100vh;
-      .light-dark {
-        padding: 10px 20px;
-        box-sizing: border-box;
-      }
-    }
-    // 暗黑模式
-    &.dark {
-      body {
-        background-color: #222;
-        color: #fff;
-      }
-    }
-  }
-</style>
-```
-
+[jcode](https://code.juejin.cn/pen/7288977580383748156)
 ### 延迟加载
 
 即时切换实际上就是将样式文件一次性加载，保证切换快速，不需要额外请求另一份样式之后在设置样式。针对于编写的 css 文件非常大(一般也不会)特定场景不同样式文件样式风格完全不同，我们可以将每一份样式表在切换的时候进行单独引用，主要步骤：
@@ -143,6 +89,9 @@ document.addEventListener('load', function () {
   setTheme('light')
 })
 ```
+> 具体示例
+
+[jcode](https://code.juejin.cn/pen/7289348835770368039)
 
 以上我们通过 axios 的请求来实现加载异步样式表，如果你使用 vite 开发，还可以结合 import.meta.glob 及其 import() 来进行实现，可以打开 Network 进行验证，具体示例我放在 github 上，需要了解的朋友可以看看
 
@@ -203,8 +152,9 @@ html body {
 
 可以看出加入样式以多且需要设置的颜色也多的情况下，重复性的样式编写就成倍增长，在引用变量之后，我们只需要维护 css 变量即可，在切换 class 对 css 变量设置成不同的颜色值即可
 
-> 示例
+> 具体示例
 
+[jcode](https://code.juejin.cn/pen/7289349955313991736)
 ## 动态设置肤色切换
 
 动态设置肤色则是比多肤色切换的更高自由度，多肤色需要我们项目定义好颜色，而动态设置则是把选择权交给了用户，用户想什么颜色主题就什么颜色主题。摆脱了每种主题类变量编写的区分（相当于移除示例二的多类 css 变量编写），通过 js 来对 css 变量进行控制，以下是最小化**伪代码**
@@ -251,4 +201,6 @@ html body {
   })
 </script>
 ```
-> 示例
+> 具体示例
+
+[jcode](https://code.juejin.cn/pen/7289350212827480124)
